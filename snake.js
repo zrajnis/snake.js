@@ -7,7 +7,7 @@ const highScoreContainer = document.getElementById('highScoreContainer');
 const snake = {};
 
 food.draw = function () {
-  drawSquare(this.x, this.y, 'green', 'green');
+  drawSquare(this.x, this.y, 'orange', 'orange');
 };
 
 food.setPosition = function () {
@@ -25,7 +25,7 @@ snake.checkCollision = function () {
 
 snake.draw = function () {
   this.cells.forEach(function (cell) {
-    drawSquare(cell.x, cell.y, 'DodgerBlue', 'white')
+    drawSquare(cell.x, cell.y, 'DodgerBlue', 'black')
   });
 };
 
@@ -141,7 +141,7 @@ function resetGame () {
 };
 
 function update () {
-  drawScreen('white', 'black');
+  drawScreen('black', 'DodgerBlue');
   snake.moveAndEat().draw();
   food.draw();
 
@@ -150,5 +150,5 @@ function update () {
     resetGame();
   }
 
-  drawScore('green');
+  drawScore('orange');
 };
