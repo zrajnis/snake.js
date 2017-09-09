@@ -1,0 +1,33 @@
+body {
+  background: #93cede; /* Old browsers */
+  background: -moz-linear-gradient(-45deg, #93cede 0%, #75bdd1 41%, #49a5bf 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg, #93cede 0%,#75bdd1 41%,#49a5bf 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg, #93cede 0%,#75bdd1 41%,#49a5bf 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#93cede', endColorstr='#49a5bf',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+}
+
+.game-container {
+  margin: 80px calc(50% - 200px);
+}
+
+.game-title {
+  color: DodgerBlue;
+  font-size: 36px;
+  font-style: italic;
+  text-align: center;
+  text-shadow: -1px 0 green, 0 1px green, 1px 0 green, 0 -1px green;
+}
+
+.high-score-container {
+  color: white;
+  display: none;
+  text-align: center;
+  text-shadow: -1px 0 green, 0 1px green, 1px 0 green, 0 -1px green;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+}
