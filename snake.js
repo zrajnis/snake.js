@@ -6,13 +6,23 @@ const highScore = document.getElementById('highScore');
 const highScoreContainer = document.getElementById('highScoreContainer');
 const snake = {};
 
+food.checkCollision = function () {
+  return !!snake.cells.filter(function (cell) {
+    return cell.x === this.x && cell.y === this.y
+  }).length
+}
+
 food.draw = function () {
-  drawSquare(this.x, this.y, 'orange', 'orange');
+  drawSquare(this.x, this.y, 'orange', 'black');
 };
 
 food.setPosition = function () {
   this.x = Math.round(Math.random() * (c.width - cellSize) / cellSize);
   this.y = Math.round(Math.random() * (c.height - cellSize) / cellSize);
+
+  if (this.checkCollision()) {
+    this.setPosition()
+  }
 };
 
 snake.checkCollision = function () {
@@ -38,7 +48,7 @@ snake.initialize = function (startingX, startingY) {
   this.cells = [];
   this.direction = 'right';
   this.length = 5;
-  for (let i = this.length ;i > 0; i--) {
+  for (let i = this.length; i > 0; i--) {
     this.cells.push({
       x: startingX + i,
       y: startingY,
@@ -82,22 +92,6 @@ snake.moveAndEat = function () {
   return this;
 };
 
-initializeHighScore();
-resetGame();
-setInterval(update, 60);
-
-window.addEventListener('keydown', function (e) {
-  if (e.keyCode === 40 && snake.direction !== 'down') {
-    snake.direction = 'up';
-  } else if (e.keyCode === 39 && snake.direction !== 'left') {
-    snake.direction = 'right';
-  } else if (e.keyCode === 38 && snake.direction !== 'up') {
-    snake.direction = 'down';
-  } else if (e.keyCode === 37 && snake.direction !== 'right') {
-    snake.direction = 'left';
-  }
-});
-
 function checkHighScore () {
   if (!localStorage.getItem('highScore')) {
     highScoreContainer.style.display = 'block';
@@ -136,8 +130,8 @@ function initializeHighScore () {
 };
 
 function resetGame () {
-  food.setPosition();
   snake.initialize(4, 0);
+  food.setPosition();
 };
 
 function update () {
@@ -152,3 +146,19 @@ function update () {
 
   drawScore('orange');
 };
+
+initializeHighScore();
+resetGame();
+setInterval(update, 60);
+
+window.addEventListener('keydown', function (e) {
+  if (e.keyCode === 40 && snake.direction !== 'down') {
+    snake.direction = 'up';
+  } else if (e.keyCode === 39 && snake.direction !== 'left') {
+    snake.direction = 'right';
+  } else if (e.keyCode === 38 && snake.direction !== 'up') {
+    snake.direction = 'down';
+  } else if (e.keyCode === 37 && snake.direction !== 'right') {
+    snake.direction = 'left';
+  }
+});
