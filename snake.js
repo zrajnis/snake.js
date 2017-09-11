@@ -9,7 +9,7 @@ const snake = {};
 food.checkCollision = function () {
   return !!snake.cells.filter(function (cell) {
     return cell.x === this.x && cell.y === this.y
-  }).length
+  }).length;
 }
 
 food.draw = function () {
@@ -21,7 +21,7 @@ food.setPosition = function () {
   this.y = Math.round(Math.random() * (c.height - cellSize) / cellSize);
 
   if (this.checkCollision()) {
-    this.setPosition()
+    this.setPosition();
   }
 };
 
@@ -35,12 +35,12 @@ snake.checkCollision = function () {
 
 snake.draw = function () {
   this.cells.forEach(function (cell) {
-    drawSquare(cell.x, cell.y, 'DodgerBlue', 'black')
+    drawSquare(cell.x, cell.y, 'DodgerBlue', 'black');
   });
 };
 
 snake.eat = function () {
-  this.length ++;
+  this.length++;
   food.setPosition();
 };
 
@@ -60,7 +60,7 @@ snake.moveAndEat = function () {
   const newHead = {
     x: this.cells[0].x,
     y: this.cells[0].y,
-  }
+  };
 
   if (this.direction === 'right') {
     newHead.x++;
