@@ -9,7 +9,7 @@ const snake = {};
 
 food.checkCollision = function () {
   return !!snake.cells.find((cell) => cell.x === this.x && cell.y === this.y);
-}
+};
 
 food.draw = function () {
   game.drawSquare(this.x, this.y, 'orange', 'black');
