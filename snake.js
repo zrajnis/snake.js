@@ -2,18 +2,17 @@ const c = document.getElementById('gameCanvas');
 const cellSize = 10;
 const ctx = c.getContext('2d');
 const food = {};
+const game = {};
 const highScore = document.getElementById('highScore');
 const highScoreContainer = document.getElementById('highScoreContainer');
 const snake = {};
 
 food.checkCollision = function () {
-  return !!snake.cells.filter(function (cell) {
-    return cell.x === this.x && cell.y === this.y
-  }).length;
+  return !!snake.cells.find((cell) => cell.x === this.x && cell.y === this.y);
 }
 
 food.draw = function () {
-  drawSquare(this.x, this.y, 'orange', 'black');
+  game.drawSquare(this.x, this.y, 'orange', 'black');
 };
 
 food.setPosition = function () {
@@ -25,17 +24,72 @@ food.setPosition = function () {
   }
 };
 
-snake.checkCollision = function () {
-  const head = this.cells[0];
+game.checkHighScore = function () {
+  if (!localStorage.getItem('highScore')) {
+    highScoreContainer.style.display = 'block';
+  }
 
-  return !!this.cells.filter(function (cell) {
-    return cell !== head && cell.x === head.x && cell.y === head.y
-  }).length;
+  if (!localStorage.getItem('highScore') || localStorage.getItem('highScore') < (snake.length - 5)) {
+    localStorage.setItem('highScore', snake.length - 5);
+    highScore.innerHTML = snake.length - 5;
+  }
+
+  return this;
+};
+
+game.drawScore = function (fillStyle) {
+  ctx.fillStyle = fillStyle;
+  ctx.fillText('score ' + (snake.length - 5), 5, c.height - 5);
+};
+
+game.drawScreen = function (fillStyle, strokeStyle) {
+  ctx.fillStyle = fillStyle;
+  ctx.fillRect(0, 0, c.width, c.height);
+  ctx.strokeStyle = strokeStyle;
+  ctx.strokeRect(0, 0, c.width, c.height);
+};
+
+game.drawSquare = function (x, y, fillStyle, strokeStyle) {
+  ctx.fillStyle = fillStyle;
+  ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+  ctx.strokeStyle = strokeStyle;
+  ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
+};
+
+game.initializeHighScore = function () {
+  if (localStorage.getItem('highScore')) {
+    highScore.innerHTML = localStorage.getItem('highScore');
+    highScoreContainer.style.display = 'block';
+  }
+
+  return this;
+};
+
+game.reset = function () {
+  snake.initialize(4, 0);
+  food.setPosition();
+};
+
+game.update = function () {
+  this.drawScreen('black', 'DodgerBlue');
+  snake.moveAndEat().draw();
+  food.draw();
+
+  if (snake.checkCollision()) {
+    this.checkHighScore().reset();
+  }
+
+  this.drawScore('orange');
+};
+
+snake.checkCollision = function () {
+  return !!this.cells.find(
+    (cell) => cell !== this.cells[0] && cell.x === this.cells[0].x && cell.y === this.cells[0].y);
 };
 
 snake.draw = function () {
   this.cells.forEach(function (cell) {
-    drawSquare(cell.x, cell.y, 'DodgerBlue', 'black');
+    game.drawSquare(cell.x, cell.y, 'DodgerBlue', 'black');
   });
 };
 
@@ -48,12 +102,13 @@ snake.initialize = function (startingX, startingY) {
   this.cells = [];
   this.direction = 'right';
   this.length = 5;
-  for (let i = this.length; i > 0; i--) {
-    this.cells.push({
-      x: startingX + i,
+  //for loop would be at least twice as fast, but that's irrelevant in this case
+  this.cells = Array.apply(null, new Array(this.length)).map(
+    (value, index) => ({
+      x: startingX + index,
       y: startingY,
-    });
-  }
+    })
+  ).reverse();
 };
 
 snake.moveAndEat = function () {
@@ -92,64 +147,8 @@ snake.moveAndEat = function () {
   return this;
 };
 
-function checkHighScore () {
-  if (!localStorage.getItem('highScore')) {
-    highScoreContainer.style.display = 'block';
-  }
-
-  if (!localStorage.getItem('highScore') || localStorage.getItem('highScore') < (snake.length - 5)) {
-    localStorage.setItem('highScore', snake.length - 5);
-    highScore.innerHTML = snake.length - 5;
-  }
-};
-
-function drawScore (fillStyle) {
-  ctx.fillStyle = fillStyle;
-  ctx.fillText('score ' + (snake.length - 5), 5, c.height - 5);
-};
-
-function drawScreen (fillStyle, strokeStyle) {
-  ctx.fillStyle = fillStyle;
-  ctx.fillRect(0, 0, c.width, c.height);
-  ctx.strokeStyle = strokeStyle;
-  ctx.strokeRect(0, 0, c.width, c.height);
-};
-
-function drawSquare (x, y, fillStyle, strokeStyle) {
-  ctx.fillStyle = fillStyle;
-  ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-  ctx.strokeStyle = strokeStyle;
-  ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
-};
-
-function initializeHighScore () {
-  if (localStorage.getItem('highScore')) {
-    highScore.innerHTML = localStorage.getItem('highScore');
-    highScoreContainer.style.display = 'block';
-  }
-};
-
-function resetGame () {
-  snake.initialize(4, 0);
-  food.setPosition();
-};
-
-function update () {
-  drawScreen('black', 'DodgerBlue');
-  snake.moveAndEat().draw();
-  food.draw();
-
-  if (snake.checkCollision()) {
-    checkHighScore();
-    resetGame();
-  }
-
-  drawScore('orange');
-};
-
-initializeHighScore();
-resetGame();
-setInterval(update, 60);
+game.initializeHighScore().reset();
+setInterval(game.update.bind(game), 60);
 
 window.addEventListener('keydown', function (e) {
   if (e.keyCode === 40 && snake.direction !== 'down') {
