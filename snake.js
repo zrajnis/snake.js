@@ -99,7 +99,6 @@ snake.eat = function () {
 };
 
 snake.initialize = function (startingX, startingY) {
-  this.cells = [];
   this.direction = 'right';
   this.length = 5;
   //for loop would be at least twice as fast, but that's irrelevant in this case
